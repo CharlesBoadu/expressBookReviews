@@ -63,8 +63,8 @@ regd_users.post("/login", (req, res) => {
 regd_users.put("/auth/review/:isbn", (req, res) => {
   //Write your code here
   const isbn = req.params.isbn;
-  const review = req.body.review;
-  const username = req.body.username;
+  const review = req.query.review;
+  const username = req.session.user.username;
 
   if (!isbn || !review) {
     return res.status(404).json({ message: "Error posting review" });
@@ -75,11 +75,11 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
     if (books[isbn].reviews.hasOwnProperty(username)) {
       // If the user has already reviewed, update the existing review
       books[isbn].reviews[username] = review;
-      return res.status(200).json({ message: "Review Updated" });
+      return res.status(200).json({ message: `The review for the book with ISBN ${isbn} has been updated` });
     } else {
       // If the user hasn't reviewed, add a new review wtih the username as the key
       books[isbn].reviews[username] = review;
-      return res.status(200).json({ message: "Review Added" });
+      return res.status(200).json({ message: `The review for the book with ISBN ${isbn} has been added` });
     }
   } else {
     // If the book is not found, return an error
@@ -91,6 +91,8 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
 regd_users.delete("/auth/review/:isbn", (req, res) => {
   //Write your code here
   const isbn = req.params.isbn;
+  const username = req.body.username;
+
   if (!isbn) {
     return res.status(404).json({ message: "Error deleting review" });
   }
