@@ -22,11 +22,38 @@ public_users.post("/register", (req,res) => {
   return res.status(200).json({message: "User Registered"});
 });
 
+// Get the book list available in the shop using using async-await with Axios
+public_users.get('/books',async function (req, res) {
+  //Write your code here
+  await axios.get('http://localhost:5000/')
+  .then(response => {
+    return res.send(JSON.stringify(response.data, null, 4));
+  })
+  .catch(error => {
+    return res.status(404).json({message: "Book not found"});
+  });
+});
+
 // Get the book list available in the shop
 public_users.get('/',function (req, res) {
   //Write your code here 
   return res.send(JSON.stringify(books, null, 4));
 });
+
+//Get the book details based on ISBN using async-await with Axios
+public_users.get('/books/isbn/:isbn',async function (req, res) {
+  //Write your code here
+  const isbn = req.params.isbn;
+  await axios.get('http://localhost:5000/isbn/' + isbn)
+  .then(response => {
+    return res.send(JSON.stringify(response.data, null, 4));
+  })
+  .catch(error => {
+    return res.status(404).json({message: "Book not found"});
+  });
+});
+
+
 
 // Get book details based on ISBN
 public_users.get('/isbn/:isbn',function (req, res) {
@@ -54,6 +81,19 @@ public_users.get('/author/:author',function (req, res) {
   } else {
     return res.status(404).json({message: "Book not found"});
   }
+});
+
+//Get all books based on title using async-await with Axios
+public_users.get('/books/title/:title',async function (req, res) {
+  //Write your code here
+  const title = req.params.title;
+  await axios.get('http://localhost:5000/title/' + title)
+  .then(response => {
+    return res.send(JSON.stringify(response.data, null, 4));
+  })
+  .catch(error => {
+    return res.status(404).json({message: "Book not found"});
+  });
 });
 
 // Get all books based on title
