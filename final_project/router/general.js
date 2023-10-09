@@ -63,6 +63,29 @@ public_users.get("/books/isbn/:isbn", async function (req, res) {
     });
 });
 
+//Get the book details based on ISBN using Promises
+public_users.get("/books/isbn/:isbn", function (req, res) {
+  const isbn = req.params.isbn;
+
+  const bookDetailsPromise = new Promise((resolve, reject) => {
+    axios.get("http://localhost:5000/isbn/" + isbn)
+      .then((response) => {
+        resolve(response.data);
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+
+  bookDetailsPromise
+    .then((data) => {
+      return res.send(JSON.stringify(data, null, 4));
+    })
+    .catch((error) => {
+      return res.status(404).json({ message: "Book not found" });
+    });
+});
+
 // Get book details based on ISBN
 public_users.get("/isbn/:isbn", function (req, res) {
   //Write your code here
