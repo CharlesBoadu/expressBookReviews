@@ -8,10 +8,10 @@ let users = [];
 const isValid = (username) => {
   //returns boolean
   //write code to check is the username is valid
-  let userswithsamename = users.filter((user)=>{
-    return user.username === username
+  let userswithsamename = users.filter((user) => {
+    return user.username === username;
   });
-  if(userswithsamename.length > 0){
+  if (userswithsamename.length > 0) {
     return true;
   } else {
     return false;
@@ -64,13 +64,25 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
   //Write your code here
   const isbn = req.params.isbn;
   const review = req.body.review;
+  const username = req.body.username;
+
   if (!isbn || !review) {
-    return res.status(404).json({ message: "Error adding review" });
+    return res.status(404).json({ message: "Error posting review" });
   }
+
   if (isbn in books) {
-    books[isbn].reviews[req.user.username] = review;
-    return res.status(200).json({ message: "Review added" });
+    // Check if the user has already reviewed the book
+    if (books[isbn].reviews.hasOwnProperty(username)) {
+      // If the user has already reviewed, update the existing review
+      books[isbn].reviews[username] = review;
+      return res.status(200).json({ message: "Review Updated" });
+    } else {
+      // If the user hasn't reviewed, add a new review wtih the username as the key
+      books[isbn].reviews[username] = review;
+      return res.status(200).json({ message: "Review Added" });
+    }
   } else {
+    // If the book is not found, return an error
     return res.status(404).json({ message: "Book not found" });
   }
 });
