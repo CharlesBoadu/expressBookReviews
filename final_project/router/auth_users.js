@@ -91,14 +91,14 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
 regd_users.delete("/auth/review/:isbn", (req, res) => {
   //Write your code here
   const isbn = req.params.isbn;
-  const username = req.body.username;
+  const username = req.session.user.username;
 
   if (!isbn) {
     return res.status(404).json({ message: "Error deleting review" });
   }
   if (isbn in books) {
-    delete books[isbn].reviews[req.user.username];
-    return res.status(200).json({ message: "Review deleted" });
+    delete books[isbn].reviews[username];
+    return res.status(200).json({ message: `Reviews for the ISBN ${isbn} by the user ${username} has been deleted` });
   } else {
     return res.status(404).json({ message: "Book not found" });
   }
